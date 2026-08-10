@@ -1,0 +1,69 @@
+@startuml
+title AI智能知识库管理系统 - 系统用例图
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam actorStyle awesome
+
+actor "系统管理员" as Admin
+actor "知识管理员" as KM
+actor "审核人员" as Auditor
+actor "普通用户" as User
+
+rectangle "AI智能知识库管理系统" {
+  usecase "登录系统" as UC_Login
+  usecase "管理个人信息" as UC_Profile
+  usecase "管理用户" as UC_User
+  usecase "管理角色与权限" as UC_RBAC
+  usecase "管理知识空间" as UC_Space
+  usecase "管理空间成员" as UC_Member
+  usecase "上传与管理文档" as UC_Doc
+  usecase "审核文档" as UC_Audit
+  usecase "解析文档" as UC_Parse
+  usecase "切分文本" as UC_Chunk
+  usecase "构建知识索引" as UC_Index
+  usecase "搜索知识" as UC_Search
+  usecase "智能问答" as UC_Chat
+  usecase "查看引用来源" as UC_Citation
+  usecase "管理问答历史" as UC_History
+  usecase "评价回答" as UC_Feedback
+  usecase "查看数据统计" as UC_Stats
+  usecase "管理模型与系统配置" as UC_Config
+  usecase "查看审计日志" as UC_Log
+}
+
+Admin --> UC_Login
+Admin --> UC_Profile
+Admin --> UC_User
+Admin --> UC_RBAC
+Admin --> UC_Space
+Admin --> UC_Stats
+Admin --> UC_Config
+Admin --> UC_Log
+
+KM --> UC_Login
+KM --> UC_Profile
+KM --> UC_Space
+KM --> UC_Member
+KM --> UC_Doc
+KM --> UC_Stats
+
+Auditor --> UC_Login
+Auditor --> UC_Audit
+
+User --> UC_Login
+User --> UC_Profile
+User --> UC_Search
+User --> UC_Chat
+User --> UC_Citation
+User --> UC_History
+User --> UC_Feedback
+
+UC_Doc ..> UC_Parse : <<include>>
+UC_Parse ..> UC_Chunk : <<include>>
+UC_Chunk ..> UC_Index : <<include>>
+UC_Chat ..> UC_Search : <<include>>
+UC_Citation ..> UC_Chat : <<extend>>
+
+@enduml
