@@ -187,12 +187,22 @@ GitHub 可直接显示的 SVG 渲染结果：
 ```plantuml
 @startuml
 left to right direction
+!pragma layout smetana
 skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 45
+skinparam ranksep 55
 
+actor "系统用户" as SystemUser
 actor "系统管理员" as Admin
 actor "知识管理员" as KM
 actor "审核人员" as Auditor
 actor "普通用户" as User
+
+Admin --|> SystemUser
+KM --|> SystemUser
+Auditor --|> SystemUser
+User --|> SystemUser
 
 rectangle "AI智能知识库管理系统" {
   usecase "登录系统" as UC_Login
@@ -216,8 +226,8 @@ rectangle "AI智能知识库管理系统" {
   usecase "查看审计日志" as UC_Log
 }
 
-Admin --> UC_Login
-Admin --> UC_Profile
+SystemUser --> UC_Login
+SystemUser --> UC_Profile
 Admin --> UC_User
 Admin --> UC_RBAC
 Admin --> UC_Space
@@ -225,18 +235,13 @@ Admin --> UC_Stats
 Admin --> UC_Config
 Admin --> UC_Log
 
-KM --> UC_Login
-KM --> UC_Profile
 KM --> UC_Space
 KM --> UC_Member
 KM --> UC_Doc
 KM --> UC_Stats
 
-Auditor --> UC_Login
 Auditor --> UC_Audit
 
-User --> UC_Login
-User --> UC_Profile
 User --> UC_Search
 User --> UC_Chat
 User --> UC_History
@@ -254,46 +259,63 @@ User --> UC_Citation
 ## 5.2 Mermaid 预览版
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":55,"rankSpacing":75,"padding":14,"useMaxWidth":false}}}%%
 flowchart LR
-    Admin["系统管理员"]
-    KM["知识管理员"]
-    Auditor["审核人员"]
-    User["普通用户"]
-
-    subgraph SYS["AI智能知识库管理系统"]
-        UC1(("登录系统"))
-        UC2(("个人信息管理"))
-
-        UC3(("用户管理"))
-        UC4(("角色管理"))
-        UC5(("权限管理"))
-
-        UC6(("创建知识空间"))
-        UC7(("管理知识空间"))
-        UC8(("空间成员管理"))
-
-        UC9(("上传文档"))
-        UC10(("文档管理"))
-        UC11(("文档解析"))
-        UC12(("文本分块"))
-        UC13(("知识向量化"))
-
-        UC14(("知识搜索"))
-        UC15(("智能问答"))
-        UC16(("查看引用来源"))
-        UC17(("查看问答历史"))
-        UC18(("问答反馈"))
-
-        UC19(("文档审核"))
-
-        UC20(("数据统计"))
-        UC21(("系统配置"))
-        UC22(("模型配置"))
-        UC23(("日志管理"))
+    subgraph ACTORS["系统角色"]
+        direction TB
+        SystemUser["系统用户"]
+        Admin["系统管理员"]
+        KM["知识管理员"]
+        Auditor["审核人员"]
+        User["普通用户"]
     end
 
-    Admin --> UC1
-    Admin --> UC2
+    Admin -. "角色特化" .-> SystemUser
+    KM -. "角色特化" .-> SystemUser
+    Auditor -. "角色特化" .-> SystemUser
+    User -. "角色特化" .-> SystemUser
+
+    subgraph SYS["AI智能知识库管理系统"]
+        direction TB
+        subgraph COMMON["通用能力"]
+            direction LR
+            UC1(("登录系统"))
+            UC2(("个人信息管理"))
+        end
+        subgraph ADMIN["系统治理"]
+            direction LR
+            UC3(("用户管理"))
+            UC4(("角色管理"))
+            UC5(("权限管理"))
+            UC20(("数据统计"))
+            UC21(("系统配置"))
+            UC22(("模型配置"))
+            UC23(("日志管理"))
+        end
+        subgraph KNOWLEDGE["知识管理"]
+            direction LR
+            UC6(("创建知识空间"))
+            UC7(("管理知识空间"))
+            UC8(("空间成员管理"))
+            UC9(("上传文档"))
+            UC10(("文档管理"))
+            UC19(("文档审核"))
+            UC11(("文档解析"))
+            UC12(("文本分块"))
+            UC13(("知识向量化"))
+        end
+        subgraph QA["检索与问答"]
+            direction LR
+            UC14(("知识搜索"))
+            UC15(("智能问答"))
+            UC16(("查看引用来源"))
+            UC17(("查看问答历史"))
+            UC18(("问答反馈"))
+        end
+    end
+
+    SystemUser --> UC1
+    SystemUser --> UC2
     Admin --> UC3
     Admin --> UC4
     Admin --> UC5
@@ -303,8 +325,6 @@ flowchart LR
     Admin --> UC22
     Admin --> UC23
 
-    KM --> UC1
-    KM --> UC2
     KM --> UC6
     KM --> UC7
     KM --> UC8
@@ -312,11 +332,8 @@ flowchart LR
     KM --> UC10
     KM --> UC20
 
-    Auditor --> UC1
     Auditor --> UC19
 
-    User --> UC1
-    User --> UC2
     User --> UC14
     User --> UC15
     User --> UC16
@@ -336,7 +353,8 @@ flowchart LR
 # 六、项目 WBS 任务分解
 
 ```mermaid
-flowchart TD
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":35,"rankSpacing":70,"padding":12,"useMaxWidth":false}}}%%
+flowchart LR
     P["AI智能知识库管理系统"]
 
     P --> A["1. 需求分析"]
@@ -415,6 +433,7 @@ flowchart TD
 ## 7.2 项目甘特图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"gantt":{"barHeight":24,"barGap":8,"topPadding":55,"leftPadding":110,"gridLineStartPadding":40,"fontSize":14,"sectionFontSize":15,"numberSectionStyles":4,"useMaxWidth":false}}}%%
 gantt
     title AI智能知识库管理系统 11 周开发计划
     dateFormat  YYYY-MM-DD
@@ -465,19 +484,23 @@ gantt
 # 八、系统总体架构图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":45,"rankSpacing":70,"padding":14,"useMaxWidth":false}}}%%
 flowchart TB
     U["用户 / Browser"]
 
     subgraph FE["客户端层"]
+        direction LR
         WEB["Vue 3 + TypeScript"]
     end
 
     subgraph ACCESS["接入层"]
+        direction LR
         NGINX["Nginx"]
         GATEWAY["API Gateway / Spring Boot"]
     end
 
     subgraph BIZ["业务服务层"]
+        direction LR
         AUTH["认证授权模块"]
         USER["用户管理模块"]
         SPACE["知识空间模块"]
@@ -488,6 +511,7 @@ flowchart TB
     end
 
     subgraph AI["AI服务层"]
+        direction LR
         PARSER["文档解析服务"]
         CHUNK["文本切分服务"]
         EMB["Embedding服务"]
@@ -498,6 +522,7 @@ flowchart TB
     end
 
     subgraph DATA["数据与基础设施"]
+        direction LR
         MYSQL[("MySQL")]
         REDIS[("Redis")]
         MINIO[("MinIO")]
@@ -538,8 +563,7 @@ flowchart TB
     RET --> VECTOR
     RET --> ES
     RET --> RR
-    RR --> RAG
-    RAG --> LLMGW
+    RR --> LLMGW
     LLMGW --> MODEL
 ```
 
@@ -548,6 +572,7 @@ flowchart TB
 # 九、系统模块架构图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":38,"rankSpacing":75,"padding":12,"useMaxWidth":false}}}%%
 flowchart LR
     SYS["AI知识库管理系统"]
 
@@ -591,7 +616,9 @@ flowchart LR
 # 十、系统类图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"class":{"useMaxWidth":false},"flowchart":{"curve":"linear","nodeSpacing":45,"rankSpacing":70}}}%%
 classDiagram
+    direction LR
 
     class User {
         +Long id
@@ -737,6 +764,7 @@ classDiagram
 # 十一、文档处理活动图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":45,"rankSpacing":65,"padding":12,"useMaxWidth":false}}}%%
 flowchart TD
     A([开始]) --> B["用户选择知识空间"]
     B --> C["上传文档"]
@@ -773,6 +801,7 @@ flowchart TD
 # 十二、智能问答活动图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":55,"rankSpacing":65,"padding":12,"useMaxWidth":false}}}%%
 flowchart TD
     A([开始]) --> B["用户输入问题"]
     B --> C["身份认证与权限校验"]
@@ -812,6 +841,7 @@ flowchart TD
 # 十三、知识库 RAG 核心流程图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":40,"rankSpacing":65,"padding":12,"useMaxWidth":false}}}%%
 flowchart LR
     DOC["原始文档"] --> PARSE["文档解析"]
     PARSE --> CLEAN["文本清洗"]
@@ -840,7 +870,9 @@ flowchart LR
 # 十四、ER 图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"er":{"useMaxWidth":false,"diagramPadding":28,"layoutDirection":"LR","minEntityWidth":120,"minEntityHeight":80,"entityPadding":20,"stroke":"gray","fill":"honeydew","fontSize":13}}}%%
 erDiagram
+    direction LR
 
     SYS_USER {
         bigint id PK
@@ -1244,6 +1276,7 @@ Authorization: Bearer {JWT}
 # 十八、登录时序图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"sequence":{"useMaxWidth":false,"diagramMarginX":55,"diagramMarginY":20,"actorMargin":65,"width":170,"height":65,"boxMargin":12,"messageMargin":35,"noteMargin":12,"wrap":true}}}%%
 sequenceDiagram
     actor U as 用户
     participant F as 前端
@@ -1278,6 +1311,7 @@ sequenceDiagram
 # 十九、文档上传与知识构建时序图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"sequence":{"useMaxWidth":false,"diagramMarginX":55,"diagramMarginY":20,"actorMargin":65,"width":170,"height":65,"boxMargin":12,"messageMargin":35,"noteMargin":12,"wrap":true}}}%%
 sequenceDiagram
     actor U as 用户
     participant F as 前端
@@ -1326,6 +1360,7 @@ sequenceDiagram
 # 二十、智能问答时序图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"sequence":{"useMaxWidth":false,"diagramMarginX":55,"diagramMarginY":20,"actorMargin":65,"width":170,"height":65,"boxMargin":12,"messageMargin":35,"noteMargin":12,"wrap":true}}}%%
 sequenceDiagram
     actor U as 用户
     participant W as Web
@@ -1378,6 +1413,7 @@ sequenceDiagram
 # 二十一、知识检索时序图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"sequence":{"useMaxWidth":false,"diagramMarginX":55,"diagramMarginY":20,"actorMargin":65,"width":170,"height":65,"boxMargin":12,"messageMargin":35,"noteMargin":12,"wrap":true}}}%%
 sequenceDiagram
     actor U as 用户
     participant C as SearchController
@@ -1412,6 +1448,7 @@ sequenceDiagram
 # 二十二、知识空间权限判断时序图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"sequence":{"useMaxWidth":false,"diagramMarginX":55,"diagramMarginY":20,"actorMargin":65,"width":170,"height":65,"boxMargin":12,"messageMargin":35,"noteMargin":12,"wrap":true}}}%%
 sequenceDiagram
     actor U as 用户
     participant F as 前端
@@ -1443,11 +1480,13 @@ sequenceDiagram
 # 二十三、部署架构图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":50,"rankSpacing":75,"padding":14,"useMaxWidth":false}}}%%
 flowchart TB
     B["Browser"]
 
     subgraph SERVER["Linux Server / Cloud"]
         subgraph DOCKER["Docker Compose"]
+            direction LR
             N["Nginx"]
             FE["Vue Web"]
             API["Spring Boot API"]
@@ -1479,6 +1518,7 @@ flowchart TB
 # 二十四、前端页面结构图
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":38,"rankSpacing":70,"padding":12,"useMaxWidth":false}}}%%
 flowchart TD
     LOGIN["登录页"] --> HOME["系统首页 Dashboard"]
 
@@ -1517,6 +1557,7 @@ flowchart TD
 ## 25.1 系统级 RBAC
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":40,"rankSpacing":60,"padding":12,"useMaxWidth":false}}}%%
 flowchart LR
     U["User 用户"] --> UR["UserRole"]
     UR --> R["Role 角色"]
@@ -1541,7 +1582,9 @@ flowchart LR
 # 二十六、文档状态机
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"state":{"useMaxWidth":false}}}%%
 stateDiagram-v2
+    direction LR
     [*] --> UPLOADED : 上传完成
     UPLOADED --> WAITING_PARSE : 创建解析任务
     WAITING_PARSE --> PARSING : 开始解析
@@ -1678,6 +1721,7 @@ Temperature     = 0.1 ~ 0.3
 权限安全链：
 
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":35,"rankSpacing":55,"padding":12,"useMaxWidth":false}}}%%
 flowchart LR
     U["当前用户"] --> P1["用户身份"]
     P1 --> P2["空间成员权限"]
@@ -1763,24 +1807,31 @@ RerankProvider
 # 三十三、系统完整业务闭环
 
 ```mermaid
-flowchart TD
+%%{init: {"theme":"base","themeVariables":{"fontFamily":"Microsoft YaHei, Arial, sans-serif"},"flowchart":{"curve":"linear","nodeSpacing":50,"rankSpacing":70,"padding":14,"useMaxWidth":false}}}%%
+flowchart LR
+    subgraph ACCESS["访问入口"]
+        direction LR
     U["用户"] --> AUTH["登录认证"]
     AUTH --> PERM["权限系统"]
+    end
 
+    subgraph INGEST["知识构建链路"]
+        direction LR
     PERM --> KM["知识管理"]
-    PERM --> QA["智能问答"]
-
     KM --> SPACE["知识空间"]
     SPACE --> DOC["文档上传"]
     DOC --> PARSE["文档解析"]
     PARSE --> CHUNK["Chunk切分"]
     CHUNK --> EMB["Embedding"]
     EMB --> VDB[("Vector DB")]
+    end
 
+    subgraph ASK["智能问答链路"]
+        direction LR
+    PERM --> QA["智能问答"]
     QA --> QUERY["用户问题"]
     QUERY --> QEMB["Query Embedding"]
     QEMB --> RET["Retrieval"]
-    VDB --> RET
     RET --> RR["Rerank"]
     RR --> CTX["Context"]
     CTX --> LLM["LLM"]
@@ -1788,6 +1839,9 @@ flowchart TD
 
     LLM --> ANSWER["AI回答"]
     ANSWER --> CITE["引用来源"]
+    end
+
+    VDB --> RET
     CITE --> FB["用户反馈"]
     FB --> STAT["数据统计"]
     STAT --> OPT["知识与模型持续优化"]
